@@ -126,9 +126,7 @@
 
 /* all zlib typedefs in zlib.h and zconf.h */
 #  define Byte                  z_Byte
-#  define Bytef                 z_Bytef
 #  define alloc_func            z_alloc_func
-#  define charf                 z_charf
 #  define free_func             z_free_func
 #  ifndef Z_SOLO
 #    define gzFile                z_gzFile
@@ -136,15 +134,11 @@
 #  define gz_header             z_gz_header
 #  define gz_headerp            z_gz_headerp
 #  define in_func               z_in_func
-#  define intf                  z_intf
 #  define out_func              z_out_func
 #  define uInt                  z_uInt
-#  define uIntf                 z_uIntf
 #  define uLong                 z_uLong
-#  define uLongf                z_uLongf
 #  define voidp                 z_voidp
 #  define voidpc                z_voidpc
-#  define voidpf                z_voidpf
 
 /* all zlib structs in zlib.h and zconf.h */
 #  define gz_header_s           z_gz_header_s
@@ -166,21 +160,7 @@
 #    define WIN32
 #  endif
 #endif
-#if (defined(MSDOS) || defined(OS2) || defined(WINDOWS)) && !defined(WIN32)
-#  if !defined(__GNUC__) && !defined(__FLAT__) && !defined(__386__)
-#    ifndef SYS16BIT
-#      define SYS16BIT
-#    endif
-#  endif
-#endif
 
-/*
- * Compile with -DMAXSEG_64K if the alloc function cannot allocate more
- * than 64k bytes at a time (needed on systems with 16-bit int).
- */
-#ifdef SYS16BIT
-#  define MAXSEG_64K
-#endif
 #ifdef MSDOS
 #  define UNALIGNED_OK
 #endif
@@ -224,18 +204,9 @@
 #  define z_const
 #endif
 
-/* Some Mac compilers merge all .h files incorrectly: */
-#if defined(__MWERKS__)||defined(applec)||defined(THINK_C)||defined(__SC__)
-#  define NO_DUMMY_DECL
-#endif
-
 /* Maximum value for memLevel in deflateInit2 */
 #ifndef MAX_MEM_LEVEL
-#  ifdef MAXSEG_64K
-#    define MAX_MEM_LEVEL 8
-#  else
 #    define MAX_MEM_LEVEL 9
-#  endif
 #endif
 
 /* Maximum value for windowBits in deflateInit2 and inflateInit2.
@@ -260,51 +231,6 @@
  for small objects.
 */
 
-                        /* Type declarations */
-
-#ifndef OF /* function prototypes */
-#  ifdef STDC
-#    define OF(args)  args
-#  else
-#    define OF(args)  ()
-#  endif
-#endif
-
-#ifndef Z_ARG /* function prototypes for stdarg */
-#  if defined(STDC) || defined(Z_HAVE_STDARG_H)
-#    define Z_ARG(args)  args
-#  else
-#    define Z_ARG(args)  ()
-#  endif
-#endif
-
-/* The following definitions for FAR are needed only for MSDOS mixed
- * model programming (small or medium model with some far allocations).
- * This was tested only with MSC; for other MSDOS compilers you may have
- * to define NO_MEMCPY in zutil.h.  If you don't need the mixed model,
- * just define FAR to be empty.
- */
-#ifdef SYS16BIT
-#  if defined(M_I86SM) || defined(M_I86MM)
-     /* MSC small or medium model */
-#    define SMALL_MEDIUM
-#    ifdef _MSC_VER
-#      define FAR _far
-#    else
-#      define FAR far
-#    endif
-#  endif
-#  if (defined(__SMALL__) || defined(__MEDIUM__))
-     /* Turbo C small or medium model */
-#    define SMALL_MEDIUM
-#    ifdef __BORLANDC__
-#      define FAR _far
-#    else
-#      define FAR far
-#    endif
-#  endif
-#endif
-
 #if defined(WINDOWS) || defined(WIN32)
    /* If building or using zlib as a DLL, define ZLIB_DLL.
     * This is not mandatory, but it offers a little performance increase.
@@ -323,9 +249,6 @@
     * Caution: the standard ZLIB1.DLL is NOT compiled using ZLIB_WINAPI.
     */
 #  ifdef ZLIB_WINAPI
-#    ifdef FAR
-#      undef FAR
-#    endif
 #    include <windows.h>
      /* No need for _export, use ZLIB.DEF instead. */
      /* For complete Windows compatibility, use WINAPI, not __stdcall. */
@@ -333,7 +256,7 @@
 #    ifdef WIN32
 #      define ZEXPORTVA WINAPIV
 #    else
-#      define ZEXPORTVA FAR CDECL
+#      define ZEXPORTVA CDECL
 #    endif
 #  endif
 #endif
@@ -360,34 +283,17 @@
 #  define ZEXPORTVA
 #endif
 
-#ifndef FAR
-#  define FAR
-#endif
-
 #if !defined(__MACTYPES__)
 typedef unsigned char  Byte;  /* 8 bits */
 #endif
 typedef unsigned int   uInt;  /* 16 bits or more */
 typedef unsigned long  uLong; /* 32 bits or more */
 
-#ifdef SMALL_MEDIUM
-   /* Borland C/C++ and some old MSC versions ignore FAR inside typedef */
-#  define Bytef Byte FAR
-#else
-   typedef Byte  FAR Bytef;
-#endif
-typedef char  FAR charf;
-typedef int   FAR intf;
-typedef uInt  FAR uIntf;
-typedef uLong FAR uLongf;
-
 #ifdef STDC
    typedef void const *voidpc;
-   typedef void FAR   *voidpf;
    typedef void       *voidp;
 #else
    typedef Byte const *voidpc;
-   typedef Byte FAR   *voidpf;
    typedef Byte       *voidp;
 #endif
 

@@ -10,10 +10,6 @@
 #  include "gzguts.h"
 #endif
 
-#ifndef NO_DUMMY_DECL
-struct internal_state      {int dummy;}; /* for buggy compilers */
-#endif
-
 z_const char * const z_errmsg[10] = {
 "need dictionary",     /* Z_NEED_DICT       2  */
 "stream end",          /* Z_STREAM_END      1  */
@@ -49,7 +45,7 @@ uLong ZEXPORT zlibCompileFlags()
     case 8:     flags += 2 << 2;        break;
     default:    flags += 3 << 2;
     }
-    switch ((int)(sizeof(voidpf))) {
+    switch ((int)(sizeof(voidp))) {
     case 2:     break;
     case 4:     flags += 1 << 4;        break;
     case 8:     flags += 2 << 4;        break;
@@ -122,8 +118,7 @@ uLong ZEXPORT zlibCompileFlags()
 #  endif
 int ZLIB_INTERNAL z_verbose = verbose;
 
-void ZLIB_INTERNAL z_error (m)
-    char *m;
+void ZLIB_INTERNAL z_error(char *m)
 {
     fprintf(stderr, "%s\n", m);
     exit(1);
@@ -133,8 +128,7 @@ void ZLIB_INTERNAL z_error (m)
 /* exported to allow conversion of error code to string for compress() and
  * uncompress()
  */
-const char * ZEXPORT zError(err)
-    int err;
+const char * ZEXPORT zError(int err)
 {
     return ERR_MSG(err);
 }
@@ -149,10 +143,7 @@ const char * ZEXPORT zError(err)
 
 #ifndef HAVE_MEMCPY
 
-void ZLIB_INTERNAL zmemcpy(dest, source, len)
-    Bytef* dest;
-    const Bytef* source;
-    uInt  len;
+void ZLIB_INTERNAL zmemcpy(Byte* dest, const Byte* source, uInt len)
 {
     if (len == 0) return;
     do {
@@ -160,10 +151,7 @@ void ZLIB_INTERNAL zmemcpy(dest, source, len)
     } while (--len != 0);
 }
 
-int ZLIB_INTERNAL zmemcmp(s1, s2, len)
-    const Bytef* s1;
-    const Bytef* s2;
-    uInt  len;
+int ZLIB_INTERNAL zmemcmp(const Byte* s1, const Byte* s2, uInt len)
 {
     uInt j;
 
@@ -173,9 +161,7 @@ int ZLIB_INTERNAL zmemcmp(s1, s2, len)
     return 0;
 }
 
-void ZLIB_INTERNAL zmemzero(dest, len)
-    Bytef* dest;
-    uInt  len;
+void ZLIB_INTERNAL zmemzero(Byte* dest, uInt len)
 {
     if (len == 0) return;
     do {
@@ -186,134 +172,22 @@ void ZLIB_INTERNAL zmemzero(dest, len)
 
 #ifndef Z_SOLO
 
-#ifdef SYS16BIT
-
-#ifdef __TURBOC__
-/* Turbo C in 16-bit mode */
-
-#  define MY_ZCALLOC
-
-/* Turbo C malloc() does not allow dynamic allocation of 64K bytes
- * and farmalloc(64K) returns a pointer with an offset of 8, so we
- * must fix the pointer. Warning: the pointer must be put back to its
- * original form in order to free it, use zcfree().
- */
-
-#define MAX_PTR 10
-/* 10*64K = 640K */
-
-local int next_ptr = 0;
-
-typedef struct ptr_table_s {
-    voidpf org_ptr;
-    voidpf new_ptr;
-} ptr_table;
-
-local ptr_table table[MAX_PTR];
-/* This table is used to remember the original form of pointers
- * to large buffers (64K). Such pointers are normalized with a zero offset.
- * Since MSDOS is not a preemptive multitasking OS, this table is not
- * protected from concurrent access. This hack doesn't work anyway on
- * a protected system like OS/2. Use Microsoft C instead.
- */
-
-voidpf ZLIB_INTERNAL zcalloc (voidpf opaque, unsigned items, unsigned size)
-{
-    voidpf buf = opaque; /* just to make some compilers happy */
-    ulg bsize = (ulg)items*size;
-
-    /* If we allocate less than 65520 bytes, we assume that farmalloc
-     * will return a usable pointer which doesn't have to be normalized.
-     */
-    if (bsize < 65520L) {
-        buf = farmalloc(bsize);
-        if (*(ush*)&buf != 0) return buf;
-    } else {
-        buf = farmalloc(bsize + 16L);
-    }
-    if (buf == NULL || next_ptr >= MAX_PTR) return NULL;
-    table[next_ptr].org_ptr = buf;
-
-    /* Normalize the pointer to seg:0 */
-    *((ush*)&buf+1) += ((ush)((uch*)buf-0) + 15) >> 4;
-    *(ush*)&buf = 0;
-    table[next_ptr++].new_ptr = buf;
-    return buf;
-}
-
-void ZLIB_INTERNAL zcfree (voidpf opaque, voidpf ptr)
-{
-    int n;
-    if (*(ush*)&ptr != 0) { /* object < 64K */
-        farfree(ptr);
-        return;
-    }
-    /* Find the original pointer */
-    for (n = 0; n < next_ptr; n++) {
-        if (ptr != table[n].new_ptr) continue;
-
-        farfree(table[n].org_ptr);
-        while (++n < next_ptr) {
-            table[n-1] = table[n];
-        }
-        next_ptr--;
-        return;
-    }
-    ptr = opaque; /* just to make some compilers happy */
-    Assert(0, "zcfree: ptr not found");
-}
-
-#endif /* __TURBOC__ */
-
-
-#ifdef M_I86
-/* Microsoft C in 16-bit mode */
-
-#  define MY_ZCALLOC
-
-#if (!defined(_MSC_VER) || (_MSC_VER <= 600))
-#  define _halloc  halloc
-#  define _hfree   hfree
-#endif
-
-voidpf ZLIB_INTERNAL zcalloc (voidpf opaque, uInt items, uInt size)
-{
-    if (opaque) opaque = 0; /* to make compiler happy */
-    return _halloc((long)items, size);
-}
-
-void ZLIB_INTERNAL zcfree (voidpf opaque, voidpf ptr)
-{
-    if (opaque) opaque = 0; /* to make compiler happy */
-    _hfree(ptr);
-}
-
-#endif /* M_I86 */
-
-#endif /* SYS16BIT */
-
-
 #ifndef MY_ZCALLOC /* Any system without a special alloc function */
 
 #ifndef STDC
-extern voidp  malloc OF((uInt size));
-extern voidp  calloc OF((uInt items, uInt size));
-extern void   free   OF((voidpf ptr));
+extern voidp  malloc(uInt size);
+extern voidp  calloc(uInt items, uInt size);
+extern void   free(voidp ptr);
 #endif
 
-voidpf ZLIB_INTERNAL zcalloc (opaque, items, size)
-    voidpf opaque;
-    unsigned items;
-    unsigned size;
+voidp ZLIB_INTERNAL zcalloc(voidp opaque, unsigned items, unsigned size)
 {
     if (opaque) items += size - size; /* make compiler happy */
-    return sizeof(uInt) > 2 ? (voidpf)malloc(items * size) :
-                              (voidpf)calloc(items, size);
+    return sizeof(uInt) > 2 ? (voidp)malloc(items * size) :
+                              (voidp)calloc(items, size);
 }
 
-void ZLIB_INTERNAL zcfree (opaque, ptr)
-    voidpf opaque;
-    voidpf ptr;
+void ZLIB_INTERNAL zcfree(voidp opaque, voidp ptr)
 {
     free(ptr);
     if (opaque) return; /* make compiler happy */
