@@ -289,11 +289,15 @@ typedef unsigned char  Byte;  /* 8 bits */
 typedef unsigned int   uInt;  /* 16 bits or more */
 typedef unsigned long  uLong; /* 32 bits or more */
 
+typedef Byte Bytef;
+typedef char charf;
 #ifdef STDC
    typedef void const *voidpc;
+   typedef void       *voidpf;
    typedef void       *voidp;
 #else
    typedef Byte const *voidpc;
+   typedef Byte       *voidpf;
    typedef Byte       *voidp;
 #endif
 
