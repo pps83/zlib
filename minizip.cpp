@@ -1,5 +1,5 @@
 #ifdef _MSC_VER
-#pragma warning(disable: 4244 4127 4996)
+#pragma warning(disable: 4100 4127 4244 4996)
 #endif
 
 #include "contrib/minizip/zip.c"
