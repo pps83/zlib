@@ -24,3 +24,9 @@
 /configure.log
 
 .DS_Store
+
+/contrib/vstudio/.vs
+/contrib/vstudio/bin
+*.suo
+*.VC.opendb
+*.VC.db
