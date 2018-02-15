@@ -227,10 +227,7 @@ unsigned long ZEXPORT crc32_z(unsigned long crc, const unsigned char *buf,
 }
 
 /* ========================================================================= */
-unsigned long ZEXPORT crc32(crc, buf, len)
-    unsigned long crc;
-    const unsigned char FAR *buf;
-    uInt len;
+unsigned long ZEXPORT crc32(unsigned long crc, const unsigned char *buf, uInt len)
 {
     return crc32_z(crc, buf, len);
 }

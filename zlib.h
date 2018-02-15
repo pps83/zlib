@@ -653,7 +653,7 @@ ZEXTERN int ZEXPORT deflateSetDictionary(z_streamp strm,
 */
 
 ZEXTERN int ZEXPORT deflateGetDictionary(z_streamp strm,
-                                             Bytef *dictionary,
+                                             Byte *dictionary,
                                              uInt  *dictLength);
 /*
      Returns the sliding dictionary being maintained by deflate.  dictLength is
@@ -1279,8 +1279,8 @@ ZEXTERN int ZEXPORT uncompress(Byte *dest, uLong *destLen,
    buffer with the uncompressed data up to that point.
 */
 
-ZEXTERN int ZEXPORT uncompress2 OF((Bytef *dest,   uLongf *destLen,
-                                    const Bytef *source, uLong *sourceLen));
+ZEXTERN int ZEXPORT uncompress2(Byte *dest, uLong *destLen,
+                                const Byte *source, uLong *sourceLen);
 /*
      Same as uncompress, except that sourceLen is a pointer, where the
    length of the source is *sourceLen.  On return, *sourceLen is the number of
@@ -1416,8 +1416,8 @@ ZEXTERN int ZEXPORT gzread(gzFile file, voidp buf, unsigned len);
    Z_STREAM_ERROR.
 */
 
-ZEXTERN z_size_t ZEXPORT gzfread OF((voidp buf, z_size_t size, z_size_t nitems,
-                                     gzFile file));
+ZEXTERN z_size_t ZEXPORT gzfread(voidp buf, z_size_t size, z_size_t nitems,
+                                 gzFile file);
 /*
      Read up to nitems items of size size from file to buf, otherwise operating
    as gzread() does.  This duplicates the interface of stdio's fread(), with
@@ -1702,8 +1702,8 @@ ZEXTERN uLong ZEXPORT adler32(uLong adler, const Byte *buf, uInt len);
      if (adler != original_adler) error();
 */
 
-ZEXTERN uLong ZEXPORT adler32_z OF((uLong adler, const Bytef *buf,
-                                    z_size_t len));
+ZEXTERN uLong ZEXPORT adler32_z(uLong adler, const Byte *buf,
+                                z_size_t len);
 /*
      Same as adler32(), but with a size_t length.
 */
@@ -1736,8 +1736,8 @@ ZEXTERN uLong ZEXPORT crc32(uLong crc, const Byte *buf, uInt len);
      if (crc != original_crc) error();
 */
 
-ZEXTERN uLong ZEXPORT crc32_z OF((uLong adler, const Bytef *buf,
-                                  z_size_t len));
+ZEXTERN uLong ZEXPORT crc32_z(uLong adler, const Byte *buf,
+                              z_size_t len);
 /*
      Same as crc32(), but with a size_t length.
 */

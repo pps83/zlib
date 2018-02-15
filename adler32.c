@@ -128,7 +128,7 @@ uLong ZEXPORT adler32_z(uLong adler, const Byte *buf, z_size_t len)
 }
 
 /* ========================================================================= */
-uLong ZEXPORT adler32(uLong adler, const Bytef *buf, uInt len)
+uLong ZEXPORT adler32(uLong adler, const Byte *buf, uInt len)
 {
     return adler32_z(adler, buf, len);
 }

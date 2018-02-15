@@ -50,7 +50,7 @@ int ZEXPORT uncompress2(
     stream.avail_in = 0;
     stream.zalloc = (alloc_func)0;
     stream.zfree = (free_func)0;
-    stream.opaque = (voidpf)0;
+    stream.opaque = (voidp)0;
 
     err = inflateInit(&stream);
     if (err != Z_OK) return err;
@@ -83,11 +83,7 @@ int ZEXPORT uncompress2(
            err;
 }
 
-int ZEXPORT uncompress (dest, destLen, source, sourceLen)
-    Bytef *dest;
-    uLongf *destLen;
-    const Bytef *source;
-    uLong sourceLen;
+int ZEXPORT uncompress(Byte *dest, uLong *destLen, const Byte *source, uLong sourceLen)
 {
     return uncompress2(dest, destLen, source, &sourceLen);
 }
