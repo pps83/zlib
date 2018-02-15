@@ -11,22 +11,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\minizip.cpp">
+    <ClCompile Include="..\..\test\test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\zlib.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\zlib.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\minizip\unzip.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\minizip\zip.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

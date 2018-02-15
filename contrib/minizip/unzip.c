@@ -146,7 +146,7 @@ typedef struct
     ZPOS64_T rest_read_compressed; /* number of byte to be decompressed */
     ZPOS64_T rest_read_uncompressed;/*number of byte to be obtained after decomp*/
     zlib_filefunc64_32_def z_filefunc;
-    voidpf filestream;        /* io structore of the zipfile */
+    voidp filestream;         /* io structore of the zipfile */
     uLong compression_method;   /* compression method (0==store) */
     ZPOS64_T byte_before_the_zipfile;/* byte before the zipfile, (>0 for sfx)*/
     int   raw;
@@ -159,7 +159,7 @@ typedef struct
 {
     zlib_filefunc64_32_def z_filefunc;
     int is64bitOpenFunction;
-    voidpf filestream;        /* io structore of the zipfile */
+    voidp filestream;         /* io structore of the zipfile */
     unz_global_info64 gi;       /* public global information */
     ZPOS64_T byte_before_the_zipfile;/* byte before the zipfile, (>0 for sfx)*/
     ZPOS64_T num_file;             /* number of the current file in the zipfile*/
@@ -193,10 +193,10 @@ typedef struct
 /* ===========================================================================
      Read a byte from a gz_stream; update next_in and avail_in. Return EOF
    for end of file.
-   IN assertion: the stream s has been sucessfully opened for reading.
+   IN assertion: the stream s has been successfully opened for reading.
 */
 
-static int unz64local_getByte(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, int *pi)
+static int unz64local_getByte(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidp filestream, int *pi)
 {
     unsigned char c;
     int err = (int)ZREAD64(*pzlib_filefunc_def,filestream,&c,1);
@@ -219,7 +219,7 @@ static int unz64local_getByte(const zlib_filefunc64_32_def* pzlib_filefunc_def, 
    Reads a long in LSB order from the given gz_stream. Sets
 */
 static int unz64local_getShort(const zlib_filefunc64_32_def* pzlib_filefunc_def,
-                             voidpf filestream,
+                             voidp filestream,
                              uLong *pX)
 {
     uLong x ;
@@ -241,7 +241,7 @@ static int unz64local_getShort(const zlib_filefunc64_32_def* pzlib_filefunc_def,
 }
 
 static int unz64local_getLong(const zlib_filefunc64_32_def* pzlib_filefunc_def,
-                            voidpf filestream,
+                            voidp filestream,
                             uLong *pX)
 {
     uLong x ;
@@ -271,7 +271,7 @@ static int unz64local_getLong(const zlib_filefunc64_32_def* pzlib_filefunc_def,
 }
 
 static int unz64local_getLong64(const zlib_filefunc64_32_def* pzlib_filefunc_def,
-                            voidpf filestream,
+                            voidp filestream,
                             ZPOS64_T *pX)
 {
     ZPOS64_T x ;
@@ -380,7 +380,7 @@ extern int ZEXPORT unzStringFileNameCompare(const char*  fileName1,
   Locate the Central directory of a zipfile (at the end, just before
     the global comment)
 */
-static ZPOS64_T unz64local_SearchCentralDir(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream)
+static ZPOS64_T unz64local_SearchCentralDir(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidp filestream)
 {
     unsigned char* buf;
     ZPOS64_T uSizeFile;
@@ -441,7 +441,7 @@ static ZPOS64_T unz64local_SearchCentralDir(const zlib_filefunc64_32_def* pzlib_
   Locate the Central directory 64 of a zipfile (at the end, just before
     the global comment)
 */
-static ZPOS64_T unz64local_SearchCentralDir64(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream)
+static ZPOS64_T unz64local_SearchCentralDir64(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidp filestream)
 {
     unsigned char* buf;
     ZPOS64_T uSizeFile;
@@ -1505,13 +1505,13 @@ extern int ZEXPORT unzOpenCurrentFile3(unzFile file, int* method,
 #ifdef HAVE_BZIP2
       pfile_in_zip_read_info->bstream.bzalloc = (void *(*) (void *, int, int))0;
       pfile_in_zip_read_info->bstream.bzfree = (free_func)0;
-      pfile_in_zip_read_info->bstream.opaque = (voidpf)0;
-      pfile_in_zip_read_info->bstream.state = (voidpf)0;
+      pfile_in_zip_read_info->bstream.opaque = (voidp)0;
+      pfile_in_zip_read_info->bstream.state = (voidp)0;
 
       pfile_in_zip_read_info->stream.zalloc = (alloc_func)0;
       pfile_in_zip_read_info->stream.zfree = (free_func)0;
-      pfile_in_zip_read_info->stream.opaque = (voidpf)0;
-      pfile_in_zip_read_info->stream.next_in = (voidpf)0;
+      pfile_in_zip_read_info->stream.opaque = (voidp)0;
+      pfile_in_zip_read_info->stream.next_in = (voidp)0;
       pfile_in_zip_read_info->stream.avail_in = 0;
 
       err=BZ2_bzDecompressInit(&pfile_in_zip_read_info->bstream, 0, 0);
@@ -1530,7 +1530,7 @@ extern int ZEXPORT unzOpenCurrentFile3(unzFile file, int* method,
     {
       pfile_in_zip_read_info->stream.zalloc = (alloc_func)0;
       pfile_in_zip_read_info->stream.zfree = (free_func)0;
-      pfile_in_zip_read_info->stream.opaque = (voidpf)0;
+      pfile_in_zip_read_info->stream.opaque = (voidp)0;
       pfile_in_zip_read_info->stream.next_in = 0;
       pfile_in_zip_read_info->stream.avail_in = 0;
 
@@ -1654,7 +1654,7 @@ extern int ZEXPORT unzReadCurrentFile(unzFile file, voidp buf, unsigned len)
     if (len==0)
         return 0;
 
-    pfile_in_zip_read_info->stream.next_out = (Bytef*)buf;
+    pfile_in_zip_read_info->stream.next_out = (Byte*)buf;
 
     pfile_in_zip_read_info->stream.avail_out = (uInt)len;
 
@@ -1710,7 +1710,7 @@ extern int ZEXPORT unzReadCurrentFile(unzFile file, voidp buf, unsigned len)
             pfile_in_zip_read_info->rest_read_compressed-=uReadThis;
 
             pfile_in_zip_read_info->stream.next_in =
-                (Bytef*)pfile_in_zip_read_info->read_buffer;
+                (Byte*)pfile_in_zip_read_info->read_buffer;
             pfile_in_zip_read_info->stream.avail_in = (uInt)uReadThis;
         }
 
@@ -1749,7 +1749,7 @@ extern int ZEXPORT unzReadCurrentFile(unzFile file, voidp buf, unsigned len)
         {
 #ifdef HAVE_BZIP2
             uLong uTotalOutBefore,uTotalOutAfter;
-            const Bytef *bufBefore;
+            const Byte *bufBefore;
             uLong uOutThis;
 
             pfile_in_zip_read_info->bstream.next_in        = (char*)pfile_in_zip_read_info->stream.next_in;
@@ -1762,7 +1762,7 @@ extern int ZEXPORT unzReadCurrentFile(unzFile file, voidp buf, unsigned len)
             pfile_in_zip_read_info->bstream.total_out_hi32 = 0;
 
             uTotalOutBefore = pfile_in_zip_read_info->bstream.total_out_lo32;
-            bufBefore = (const Bytef *)pfile_in_zip_read_info->bstream.next_out;
+            bufBefore = (const Byte *)pfile_in_zip_read_info->bstream.next_out;
 
             err=BZ2_bzDecompress(&pfile_in_zip_read_info->bstream);
 
@@ -1775,10 +1775,10 @@ extern int ZEXPORT unzReadCurrentFile(unzFile file, voidp buf, unsigned len)
             pfile_in_zip_read_info->rest_read_uncompressed -= uOutThis;
             iRead += (uInt)(uTotalOutAfter - uTotalOutBefore);
 
-            pfile_in_zip_read_info->stream.next_in   = (Bytef*)pfile_in_zip_read_info->bstream.next_in;
+            pfile_in_zip_read_info->stream.next_in   = (Byte*)pfile_in_zip_read_info->bstream.next_in;
             pfile_in_zip_read_info->stream.avail_in  = pfile_in_zip_read_info->bstream.avail_in;
             pfile_in_zip_read_info->stream.total_in  = pfile_in_zip_read_info->bstream.total_in_lo32;
-            pfile_in_zip_read_info->stream.next_out  = (Bytef*)pfile_in_zip_read_info->bstream.next_out;
+            pfile_in_zip_read_info->stream.next_out  = (Byte*)pfile_in_zip_read_info->bstream.next_out;
             pfile_in_zip_read_info->stream.avail_out = pfile_in_zip_read_info->bstream.avail_out;
             pfile_in_zip_read_info->stream.total_out = pfile_in_zip_read_info->bstream.total_out_lo32;
 
@@ -1791,7 +1791,7 @@ extern int ZEXPORT unzReadCurrentFile(unzFile file, voidp buf, unsigned len)
         else
         {
             ZPOS64_T uTotalOutBefore,uTotalOutAfter;
-            const Bytef *bufBefore;
+            const Byte *bufBefore;
             ZPOS64_T uOutThis;
             int flush=Z_SYNC_FLUSH;
 

@@ -30,3 +30,4 @@
 *.suo
 *.VC.opendb
 *.VC.db
+/contrib/vstudio/foo.gz

@@ -104,11 +104,11 @@ static unsigned syncsearch(unsigned *have, const unsigned char *buf,
 
 static int inflateStateCheck(z_streamp strm)
 {
-    struct inflate_state FAR *state;
+    struct inflate_state *state;
     if (strm == Z_NULL ||
         strm->zalloc == (alloc_func)0 || strm->zfree == (free_func)0)
         return 1;
-    state = (struct inflate_state FAR *)strm->state;
+    state = (struct inflate_state *)strm->state;
     if (state == Z_NULL || state->strm != strm ||
         state->mode < HEAD || state->mode > SYNC)
         return 1;
@@ -241,7 +241,7 @@ int ZEXPORT inflatePrime(z_streamp strm, int bits, int value)
     struct inflate_state *state;
 
     if (inflateStateCheck(strm)) return Z_STREAM_ERROR;
-    state = (struct inflate_state FAR *)strm->state;
+    state = (struct inflate_state *)strm->state;
     if (bits < 0) {
         state->hold = 0;
         state->bits = 0;
@@ -767,7 +767,7 @@ int ZEXPORT inflate(z_streamp strm, int flush)
                     if (state->head != Z_NULL &&
                             state->head->name != Z_NULL &&
                             state->length < state->head->name_max)
-                        state->head->name[state->length++] = (Bytef)len;
+                        state->head->name[state->length++] = (Byte)len;
                 } while (len && copy < have);
                 if ((state->flags & 0x0200) && (state->wrap & 4))
                     state->check = crc32(state->check, next, copy);
@@ -788,7 +788,7 @@ int ZEXPORT inflate(z_streamp strm, int flush)
                     if (state->head != Z_NULL &&
                             state->head->comment != Z_NULL &&
                             state->length < state->head->comm_max)
-                        state->head->comment[state->length++] = (Bytef)len;
+                        state->head->comment[state->length++] = (Byte)len;
                 } while (len && copy < have);
                 if ((state->flags & 0x0200) && (state->wrap & 4))
                     state->check = crc32(state->check, next, copy);
@@ -1490,10 +1490,10 @@ int ZEXPORT inflateUndermine(z_streamp strm, int subvert)
 
 int ZEXPORT inflateValidate(z_streamp strm, int check)
 {
-    struct inflate_state FAR *state;
+    struct inflate_state *state;
 
     if (inflateStateCheck(strm)) return Z_STREAM_ERROR;
-    state = (struct inflate_state FAR *)strm->state;
+    state = (struct inflate_state *)strm->state;
     if (check)
         state->wrap |= 4;
     else
@@ -1515,7 +1515,7 @@ long ZEXPORT inflateMark(z_streamp strm)
 
 unsigned long ZEXPORT inflateCodesUsed(z_streamp strm)
 {
-    struct inflate_state FAR *state;
+    struct inflate_state *state;
     if (inflateStateCheck(strm)) return (unsigned long)-1;
     state = (struct inflate_state *)strm->state;
     return (unsigned long)(state->next - state->codes);

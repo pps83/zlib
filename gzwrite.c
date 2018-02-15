@@ -201,7 +201,7 @@ static z_size_t gz_write(gz_statep state, voidpc buf, z_size_t len)
                               state->in);
             copy = state->size - have;
             if (copy > len)
-                copy = len;
+                copy = (unsigned)len;
             memcpy(state->in + have, buf, copy);
             state->strm.avail_in += copy;
             state->x.pos += copy;
@@ -217,11 +217,11 @@ static z_size_t gz_write(gz_statep state, voidpc buf, z_size_t len)
             return 0;
 
         /* directly compress user buffer to file */
-        state->strm.next_in = (z_const Bytef *)buf;
+        state->strm.next_in = (z_const Byte *)buf;
         do {
             unsigned n = (unsigned)-1;
             if (n > len)
-                n = len;
+                n = (unsigned)len;
             state->strm.avail_in = n;
             state->x.pos += n;
             if (gz_comp(state, Z_NO_FLUSH) == -1)
@@ -235,10 +235,7 @@ static z_size_t gz_write(gz_statep state, voidpc buf, z_size_t len)
 }
 
 /* -- see zlib.h -- */
-int ZEXPORT gzwrite(file, buf, len)
-    gzFile file;
-    voidpc buf;
-    unsigned len;
+int ZEXPORT gzwrite(gzFile file, voidpc buf, unsigned len)
 {
     gz_statep state;
 
@@ -263,11 +260,7 @@ int ZEXPORT gzwrite(file, buf, len)
 }
 
 /* -- see zlib.h -- */
-z_size_t ZEXPORT gzfwrite(buf, size, nitems, file)
-    voidpc buf;
-    z_size_t size;
-    z_size_t nitems;
-    gzFile file;
+z_size_t ZEXPORT gzfwrite(voidpc buf, z_size_t size, z_size_t nitems, gzFile file)
 {
     z_size_t len;
     gz_statep state;
@@ -356,7 +349,7 @@ int ZEXPORT gzputs(gzFile file,  const char *str)
 
     /* write string */
     len = strlen(str);
-    ret = gz_write(state, str, len);
+    ret = (unsigned)gz_write(state, str, len);
     return ret == 0 && len != 0 ? -1 : ret;
 }
 

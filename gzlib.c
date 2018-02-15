@@ -576,7 +576,7 @@ void ZLIB_INTERNAL gz_error(gz_statep state, int err, const char *msg)
     }
 #if !defined(NO_snprintf) && !defined(NO_vsnprintf)
     (void)snprintf(state->msg, strlen(state->path) + strlen(msg) + 3,
-                   "%s%s%s", state->path, ": ", msg);
+             "%s%s%s", state->path, ": ", msg);
 #else
     strcpy(state->msg, state->path);
     strcat(state->msg, ": ");

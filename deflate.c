@@ -197,11 +197,10 @@ static const config configuration_table[10] = {
  * bit values at the expense of memory usage). We slide even when level == 0 to
  * keep the hash table consistent if we switch back to level > 0 later.
  */
-local void slide_hash(s)
-    deflate_state *s;
+static void slide_hash(deflate_state *s)
 {
     unsigned n, m;
-    Posf *p;
+    Pos *p;
     uInt wsize = s->w_size;
 
     n = s->hash_size;
@@ -348,8 +347,7 @@ int ZEXPORT deflateInit2_(
 /* =========================================================================
  * Check for a valid deflate stream state. Return 0 if ok, 1 if not.
  */
-local int deflateStateCheck (strm)
-    z_streamp strm;
+static int deflateStateCheck(z_streamp strm)
 {
     deflate_state *s;
     if (strm == Z_NULL ||
@@ -516,7 +514,7 @@ int ZEXPORT deflateSetHeader(z_streamp strm, gz_headerp head)
 }
 
 /* ========================================================================= */
-int ZEXPORT deflatePending(unsigned *pending, int *bits, z_streamp strm)
+int ZEXPORT deflatePending(z_streamp strm, unsigned *pending, int *bits)
 {
     if (deflateStateCheck(strm)) return Z_STREAM_ERROR;
     if (pending != Z_NULL)
@@ -657,7 +655,7 @@ uLong ZEXPORT deflateBound(z_streamp strm, uLong sourceLen)
     case 2:                                 /* gzip wrapper */
         wraplen = 18;
         if (s->gzhead != Z_NULL) {          /* user-supplied gzip header */
-            Bytef *str;
+            Byte *str;
             if (s->gzhead->extra != Z_NULL)
                 wraplen += 2 + s->gzhead->extra_len;
             str = s->gzhead->name;
@@ -1767,7 +1765,7 @@ static block_state deflate_stored(deflate_state *s, int flush)
         len = MIN(left, have);
         last = flush == Z_FINISH && s->strm->avail_in == 0 &&
                len == left ? 1 : 0;
-        _tr_stored_block(s, (charf *)s->window + s->block_start, len, last);
+        _tr_stored_block(s, (char *)s->window + s->block_start, len, last);
         s->block_start += len;
         flush_pending(s->strm);
     }
