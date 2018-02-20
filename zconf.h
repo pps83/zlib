@@ -324,6 +324,8 @@ typedef unsigned long  uLong; /* 32 bits or more */
    typedef Byte const *voidpc;
    typedef Byte       *voidp;
 #endif
+typedef Byte   Bytef;
+typedef voidp  voidpf;
 
 #if !defined(Z_U4) && !defined(Z_SOLO) && defined(STDC)
 #  include <limits.h>

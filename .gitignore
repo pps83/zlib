@@ -25,9 +25,9 @@
 
 .DS_Store
 
-/contrib/vstudio/.vs
-/contrib/vstudio/bin
 *.suo
 *.VC.opendb
 *.VC.db
+/contrib/vstudio/.vs
+/contrib/vstudio/build.msvc
 /contrib/vstudio/foo.gz
