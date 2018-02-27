@@ -2,6 +2,11 @@
 #pragma warning(disable: 4127 4244 4996)
 #endif
 
+#ifndef _WIN32
+#define register
+#include <unistd.h>
+#endif
+
 #include "zutil.h"
 
 #include "adler32.c"

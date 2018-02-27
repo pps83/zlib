@@ -72,7 +72,7 @@
 
 #ifdef _WIN32
 uLong filetime(
-    char *f,               /* name of file to get info on */
+    const char *f,         /* name of file to get info on */
     tm_zip *tmzip,         /* return value: access, modific. and creation times */
     uLong *dt)             /* dostime */
 {
@@ -93,10 +93,9 @@ uLong filetime(
   }
   return ret;
 }
-#else
-#ifdef unix || __APPLE__
+#elif defined(unix) || defined(__APPLE__)
 uLong filetime(
-    char *f,               /* name of file to get info on */
+    const char *f,         /* name of file to get info on */
     tm_zip *tmzip,         /* return value: access, modific. and creation times */
     uLong *dt)             /* dostime */
 {
@@ -138,15 +137,13 @@ uLong filetime(
 }
 #else
 uLong filetime(
-    char *f,               /* name of file to get info on */
+    const char *f,         /* name of file to get info on */
     tm_zip *tmzip,         /* return value: access, modific. and creation times */
     uLong *dt)             /* dostime */
 {
     return 0;
 }
 #endif
-#endif
-
 
 
 
@@ -229,7 +226,7 @@ int isLargeFile(const char* filename)
 
   if(pFile != NULL)
   {
-    int n = FSEEKO_FUNC(pFile, 0, SEEK_END);
+    FSEEKO_FUNC(pFile, 0, SEEK_END);
     pos = FTELLO_FUNC(pFile);
 
                 printf("File : %s is %lld bytes\n", filename, pos);
