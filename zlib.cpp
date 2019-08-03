@@ -2,15 +2,12 @@
 #pragma warning(disable: 4127 4244 4996)
 #endif
 
-#ifdef __ANDROID__ // avoid issues with 64-bit stdio
 #include <stdio.h>
+#ifndef _WIN32
 #include <unistd.h>
 #endif
 
-#ifndef _WIN32
-#define register
-#include <unistd.h>
-#endif
+#define register  // do not use deprecated `register` keyword
 
 #include "zutil.h"
 
